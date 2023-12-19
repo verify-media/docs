@@ -1,0 +1,59 @@
+# Organization Nodes
+
+## Ids
+
+As org nodes don't point to digital assets directly, their ids are not calculated based on the content they represent. Org Ids must be unique, one option for
+doing so is computing them like the following:
+
+```
+newOrgNodeId = keccak256(abi.encodePacked(address(user),nonce + 1));
+```
+
+## Authorization
+
+Authorization modules for both reference and access are set utilizing the `setAccessAuth()` and `setReferenceAuth()` methods.
+Providing auth to a user at the org level means that all users authorized here will have access/reference on all child content nodes.
+
+## Metadata
+
+Each org node is associated with optional metadata which helps an indexing user understand the content of its children.
+
+The data field is flexible for organizations to declare the necessary information to consume the underlying content.
+
+In future standards may be developed for organizational patterns.
+
+## Metadata Schema
+
+### Felids 
+
+* `data` contains all the optional associated metadata for an org node.
+* `signature` contains the signature param/values from signing the content in the data field
+
+#### data
+
+* `data.description` a textual description of the children of the org node
+* `data.manifest` a extendable field where additional metadata can be stored and attested to by the signer
+
+#### signature
+
+* `signature.curve` the elliptic curve used to sign the content of the data field
+* `signature.signature` the produced signature from signing the message
+* `signature.digest` the keccak256 hash of the content in the data field
+* `signature.description` a textual description of the method used to generate the signature
+
+### Example Org Node Schema
+
+```json
+{
+  "data": {
+    "description": "",
+    "manifest": {},
+  },
+   "signature": {
+    "curve": "",
+    "signature": "",
+    "message": "",
+    "description": "",
+  },
+}
+```

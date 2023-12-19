@@ -1,0 +1,18 @@
+# Distributed Key Management
+
+In Verify all content must be publicly accessible, but some licenses require the asset to not be public.
+
+For this, a distributed key management protocol can be used to store assets in an encrypted fashion. 
+Allowing users to decrypt the content by gaining access to the symmetric key used to encrypt through satisfy the asset nodes license.
+
+Other distributed key management protocols may be support in the future, but each will require a formalization of the schema
+to be included in the access field of asset/collection nodes. 
+
+All methods of providing access to content must make use of the common interface of `IAuthorization(address authModule).auth(bytes32 id, address user)`
+
+
+Feel free to reach out if a key management protocol you wish to use is not supported.
+
+## Supported Key Management protocols
+
+* [Lit Protocol](/publishing/access-control/methods/lit-protocol) 

@@ -1,0 +1,178 @@
+# Consuming
+
+This guide will walk through the methods and signature verification steps for content that is stored on Verify.
+
+## 0. Set Up a Environment
+
+In this guide we are going to be using [ethers](https://docs.ethers.org/v5/) v5 to as part of a script to verify content
+published on Verify. Any evm compliant library or SDK can be used to perform the same steps:
+
+* [web3js](https://web3js.readthedocs.io/en/v1.10.0/)
+* [web3.py](https://web3py.readthedocs.io/en/stable/quickstart.html)
+
+**Requirements to follow this guide**
+
+* Have npm and Node js installed. Instructions [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
+With npm and node installed, pull the [getting-started](https://github.com/verify-media/getting-started) repo and install the npm packages.
+
+1. `npm install`
+
+If you are using the Sandbox environment, the `getting-started` should already contain the ABIs. 
+
+If you are not using the Sandbox environment, export the application binary interface (ABI) for the IdentityRegisty and ContentGraph smart contracts. You can do so by going to the implementation contract on the block explorer (list [here](/smart-contracts/)), and saving the exported ABI in a correspondingly named json file in the root of the
+`getting-started` directory. 
+
+## 1. Content Verification
+
+1. Modify `main()` in `index.js` in the root of the `getting-started` directory to the following:
+
+```javascript copy
+async function main() {
+    const assetId = ""
+    // verify content published
+    await consumeContent(assetId);
+}
+```
+
+If you have already completed the publishing [getting started](/publishing/getting-started/) guide, you can use the assetId that you created by setting `const assetID = <YOUR_ASSET_ID>`,
+otherwise check below on methods for seeing what assets are already stored on Verify's Content Graph.
+
+2. Run `node index.js` in the root of the directory.
+
+This will call the `consumeContent()` method on the asset ID value you passed to `assetID`. You should see the following output:
+
+```
+Data uri:  ipfs://<CID_OF_METADATA>
+Content binding matched!
+Signature message matched!
+Address recovered from signature:  <INTERMEDIATE_ADDRESS>
+Who is: <INTERMEDIATE_ADDRESS>
+Root address mapped to:  <ROOT_ADDRESS>
+```
+
+What is happening here is the metadata location is being requested from the Content Graph using the `getNode()` method, using the set assetID.
+The metadata is then fetched. In the metadata is a location for the underlying content. That is then fetched. Hashing the content received produces
+a hash which should match the content binding in the metadata file (see [asset node schema](/publishing/graph/asset-nodes/#asset-node-schema)).
+If this matches the entire data field is hashed to check the signature on the metadata. From that signature we recover an address. This address
+is checked against the identity registry to see who is the root identity behind the content.
+
+## Indexing the ContentGraph.sol
+
+Every digital asset stored on Verify is associated with a unique identifier that can be used directly or
+derived from the original asset.
+
+The metadata associated with an asset can be found by using the `getNode(bytes32 id)` method in the ContentGraph smart contract. This
+method returns some additional information such as the node type and uri. The tokenId returned can be used to request
+information regarding ownership of the token as well as parent child relationships from base ERC6150 contract methods.
+
+## Indexing IdentityRegistry.sol
+
+The main methods used to understand the identity of someone acting in the Verify protocol are `whoIs(address identity)`, `rootName(address root)` and
+`getSignature(address root, address intermediate)`. A relationship between an intermediate and a root can expire but the latest
+registration from the root signature will never be removed. This allows for checking of historical signatures and actions from intermediate identities.
+
+### whoIs()
+
+`whoIs()` takes in any address and returns the root address associated with it, if such a relationship exists. This method allows for active wallets on the protocol,
+that create tokens and sign metadata, to be associated with the root identity, who owns the content and is attesting to its authenticity.
+
+See [`whoIs()`](/publishing/identity/contract/#whoisaddress-identity) for more.
+
+### getSignature()
+
+Get signature will return the signature used to register an intermediate identity. This can be used to check the validity of the signer that is recovered
+from the signature in the metadata file. If a signature for a signer is expired in the identityRegistry then the signature from the signer is also
+expired in the metadata file corresponding to an asset.
+
+See [`getSignature()`](/publishing/identity/contract/#getsignatureaddress-_root-address-intermediate) for more.
+
+### rootName()
+
+Root name is used to identify root identities with a real world entity. Names can only be registered to a single root.
+
+## Signature Verification Step by Step
+
+Verification of content published to Verify is done through recovering the signer in the corresponding metadata file, then checking the identity
+of that signer in the Identity Registry smart contract. Verification of signatures requires a live look up because relationships between an intermediate
+and a root identity does not last forever. Each registry of a intermediate identity can have a variable length of validity.
+
+#### 1. Fetch Metadata
+
+Using the content graph `getNode` we can get the metadata associated with an asset.
+Say we call `getNode()`. From the uri returned from `getNode()` we fetched the following json:
+
+``` json copy
+  {
+    "data": {
+        "description": "A warm welcome to the world.",
+        "encrypted": false,
+        "access": {},
+        "content": [
+            {
+                "location": "ipfs://Qmc5gCcjYypU7y28oCALwfSvxCBskLuPKWpK4qpterKC7z",
+                "type": "text/plain"
+            }
+        ],
+        "manifest": {},
+        "contentBinding": {
+            "algo": "keccak256", //The algorithm used
+            "hash": "0x3ea2f1d0abf3fc66cf29eebb70cbd4e7fe762ef8a09bcc06c8edf641230afec0" //The Asset ID we generated
+        },
+    },
+    "signature": {
+        "curve": "sepc256k1",
+        "signature": "0x57956fd11e24e8ca7dacfde9dfaa4ba3eebb51e0abb52d93a01167f2d66343d165dce22b36c69b6b0d6b3cf0580a6b464a1dbd572086eafcf5c6b718f09a32771c",
+        "message": "0x6cbdbc53bcc9c02882d835b43cd0924cdaa39f6acb790c5dcb9798f7f1b0f295",
+        "description": "Signer attesting to the contents of this metadata file."
+    }
+}
+```
+
+#### 2. Check the Values Stored in the Metadata File
+
+1. Check the content binding
+
+The first thing to check is that the hash stored in the content binding matches the hash of the raw content. To do this: access the content, through a HTTP GET on the location in the content field, then hash the raw content utilizing the algorithm specified by the contentBinding.algo field.
+
+If the output value from the hashing algorithm matches the binding, then we verified that this metadata is talking about the content stored at the location provided.
+
+2. Check the signature
+
+Taking the data field of the json object and stringifying it we can check that it matches the message value in the signature field this would look like the following using [ethers](https://docs.ethers.org/v5/):
+
+```javascript copy
+const metadataString = JSON.stringify(metadata.data);
+const calculatedMessage = ethers.keccak256(ethers.toUtf8Bytes(metadataString));
+```
+
+If the calculated message matches the message in the signature then if the signature recovers a valid intermediate identity then we verify that the metadata is in the form that was signed by the key pair.
+
+Lastly we must recover the signer from the signature, using ethers we can get the public key and the corresponding address by doing the following:
+
+```javascript copy
+const signature ="0x57956fd11e24e8ca7dacfde9dfaa4ba3eebb51e0abb52d93a01167f2d66343d165dce22b36c69b6b0d6b3cf0580a6b464a1dbd572086eafcf5c6b718f09a32771c";
+const message = "0x6cbdbc53bcc9c02882d835b43cd0924cdaa39f6acb790c5dcb9798f7f1b0f295";
+
+const address = ethers.recoverAddress(message, signature);
+```
+
+We then take the recovered address and check its validity in the Identity Registry smart contract.
+
+```javascript copy
+await IdentityRegistry.whoIs(address)
+```
+
+If this method returns the 0 address i.e. `0x0000000000000000000000000000000000000000` the signature and metadata can not be taken as attested to, because the relationship
+between the signer and a root no longer exists or didn't exist in the first place. If a root identity is returned (a non zero address), this can be checked in the identity Registry `rootName()` method to
+get the corresponding named entity associated with the root.
+
+> **NOTE** Having verified the content and its metadata is from a publisher it is still up to the user to interrogate the claims
+that are being made about the content.
+
+Congrats you verified a piece of content on Verify! :D
+
+
+
+
+

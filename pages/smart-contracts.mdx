@@ -1,0 +1,49 @@
+# Smart contracts
+
+The two application contracts of Verify are the [IdentityRegistry.sol](/publishing/identity/contract/) and [ContentGraph.sol](/publishing/graph/contract/).
+
+Both make use of Openzeppelin's [TransparentUpgradeableProxy](https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy) pattern.
+
+There are three sets of these contracts currently deployed:
+
+* **Testnet**: Where real world entities are registered and content is being signed and published in a Testnet environment. Registration with the protocol required.
+* **Sandbox**: Where developers can play around with and test the protocol. No named entities or registration of identities with the protocol.
+* **Alpha**: An early stage, soon to be depricated, content graph smart contract. This was deployed as part of the testing and development of the protocol. Now being used from some early application
+developers.
+
+> A set of testnet, sandbox and maintnet contracts will be released soon on Verify's App Chain
+
+## Testnet
+
+|   Contract	|   Address	|
+|---	|---	|
+|   Identity Registry Proxy	|   [0xAE8c7c7e6819f425CE750CC7F7e72A13Ef3635E0](https://mumbai.polygonscan.com/address/0xAE8c7c7e6819f425CE750CC7F7e72A13Ef3635E0)	|
+|   Identity Registry Admin	|   [0x141ae63032Ad3D89AA20bCC92Ab601B77Ec1d200](https://mumbai.polygonscan.com/address/0x141ae63032Ad3D89AA20bCC92Ab601B77Ec1d200)	|
+|   Identity Registry Implementation	|   [0xF2a81936441BA4fE353633b2874195792Fb41823](https://mumbai.polygonscan.com/address/0xF2a81936441BA4fE353633b2874195792Fb41823)	|
+|   Content Graph Proxy	|   [0x8BeEeD7C2f3EA803d4C150D4EFc9df00675b831E](https://mumbai.polygonscan.com/address/0x8BeEeD7C2f3EA803d4C150D4EFc9df00675b831E)	|
+|   Content Graph Admin	|   [0xA1f4947faB1729b3aD10C688bA6B02BdC9cb241f](https://mumbai.polygonscan.com/address/0xA1f4947faB1729b3aD10C688bA6B02BdC9cb241f)	|
+|   Content Graph Implementation	|   [0xFC937a068c93e5878CcD5C20f2DBaEf95d7F1Cfe](https://mumbai.polygonscan.com/address/0xFC937a068c93e5878CcD5C20f2DBaEf95d7F1Cfe)	|
+
+## Sandbox
+
+**Mumbai Testnet**
+
+|   Contract	|   Address	|
+|---	|---	|
+|   Identity Registry Sandbox Proxy	|   [0x27BA7E931906FebA79dED5d32947b12f30379135](https://mumbai.polygonscan.com/address/0x27BA7E931906FebA79dED5d32947b12f30379135)	|
+|   Identity Registry Sandbox Admin	|   [0x8E7f194e8C249372Bff080C1FBfae95f332bB225](https://mumbai.polygonscan.com/address/0x8E7f194e8C249372Bff080C1FBfae95f332bB225)	|
+|   Identity Registry Sandbox Implementation	|   [0xEe586a3655EB0D017643551e9849ed828Fd7c7FA](https://mumbai.polygonscan.com/address/0xEe586a3655EB0D017643551e9849ed828Fd7c7FA)	|
+|   Content Graph Sandbox Proxy	|   [0xEF2E371BaFAe46a116519F18A1cfF750570E8842](https://mumbai.polygonscan.com/address/0xEF2E371BaFAe46a116519F18A1cfF750570E8842)	|
+|   Content Graph Sandbox Admin	|   [0xdCE27c4a76bE1fF9F9C543E13FCC3591E33A0E25](https://mumbai.polygonscan.com/address/0xdCE27c4a76bE1fF9F9C543E13FCC3591E33A0E25)	|
+|   Content Graph Sandbox Implementation	|   [0x917340A034FBce4166Bffd556015D862D00021aD](https://mumbai.polygonscan.com/address/0x917340A034FBce4166Bffd556015D862D00021aD)	|
+
+
+## Alpha
+
+**Polygon Mainnet**
+
+|   Contract	|   Address	|
+|---	|---	|
+|   Content Graph Alpha Proxy	|   [0xe2547fe5E99a08357083cFA42C6CDC0Cf5D65215](https://polygonscan.com/address/0xe2547fe5E99a08357083cFA42C6CDC0Cf5D65215)	|
+|   Content Graph Alpha Admin	|   [0x545710b7b5E43DC7738dfb973B03344ff0b074Ac](https://polygonscan.com/address/0x545710b7b5E43DC7738dfb973B03344ff0b074Ac)	|
+|   Content Graph Alpha Implementation	|   [0x41BC4B37093F156B1BAC7785e85fE5b25203f0C8](https://polygonscan.com/address/0x41BC4B37093F156B1BAC7785e85fE5b25203f0C8)	|

@@ -1,0 +1,49 @@
+# Identity
+
+A publisher in Verify is represented by a single signing key pair, called the root identity. Once this key pair is registered in the protocol, they are
+able to create N number of intermediate identities that can act on behalf of the root identity.
+
+Both root and intermediate identities are secp256k1 [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) key pairs.
+
+The reason for this separation is to allow for two distinct usage patterns:
+- stable root key pairs that maintain the balance of content tokens
+- rotatable intermediate key pairs that maintain a network balance to pay for transactions
+
+## Registering a Root Identity
+
+> **_NOTE:_** At this time root identities are added one by one in a manual process by the Verify team. This manual process is temporary and is only necessary while the Verify team works to develop decentralized methods to onboarding publishers to the identity registry.
+
+Once a root key pair has been generated. The address, the 20 rightmost bytes of the 32 byte keccak256 hash of the public key, is added to the identity registry smart
+contract along with a corresponding name to represent the root identity.
+
+Once registered the root key pair can be used to create one or more intermediate identities. The intermediate identities once registered will be used for signing content and interacting with the content graph
+smart contract.
+
+There is only one active root identity for a named identity. If no active registry exists the last used address will map to the named org, and the named org will map to the last used address. However the registry will
+not show this address as registered. If a newly registered address is used and another deprecated,
+the original address will still map to the same named entity but the name will only map the existing registered root.
+
+## Creating a Intermediate Identity
+
+Once a root identity has been registered a intermediate identity is registered by signing the public address (that corresponds to the public key) of the intermediate 
+key pair using the root key pair. With this signature the intermediate key pair any wallet can be used to register the intermediate by providing the identity registry smart contract with the signature from
+the root.
+
+Once registered the intermediate key pair will be able to create content tokens and sign on behalf of the root identity as long as the signature used to register it
+has not expired. Content tokens will all be sent to the corresponding wallet of the root key pair that the intermediate identity is registered to.
+
+The identity registry smart contract follows the [EIP712 standard](https://eips.ethereum.org/EIPS/eip-712) of typed signatures.
+
+## Managing Intermediate identities
+
+The signature used to register an intermediate identity specifies an expiry time for intermediate identity to act on behalf as the root.
+Once expired the intermediate will no longer be able to act on behalf of the root identity.
+
+Intermediate identities can only be registered to one root identity and can not be registered more than once. 
+
+To renew an existing intermediate identity, a new signature can be created from the root. The intermediate can then provide the registry with
+a fresh signature to extend its use. This is only possible while the intermediate registry is still valid (expiry timestamp has not passed).
+
+Any wallet that has a valid signature from a root to deregister an intermediate identity can deregister it. Once deregistered the intermediate
+identity will no longer be able to act on behalf of the root. The signature will still be stored for previously signed content.
+

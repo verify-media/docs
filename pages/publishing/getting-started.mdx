@@ -1,0 +1,157 @@
+# Getting started
+
+This guide will walk through publishing a piece of content onto Verify. This guide assumes knowledge of blockchain transactions and wallets.
+
+As publishers on Testnet and Mainnet must be registered
+with the protocol, here we will use the set of [sandbox contracts](/smart-contracts/#sandbox). The only differences in the sandbox environment is root identities
+are able to register themselves and there is no name entity attached to root identities. 
+
+> **Important**: This guide is meant to be used with keypairs that will not be used in production environments. Its recommended to follow
+best practices for managing wallet keys. This guide does not make recommendations on best practices for key management.
+
+## 0. Set Up a Environment
+
+In this guide we are going to be using [ethers](https://docs.ethers.org/v5/) v5 to create a script to publish content
+to Verify. Any evm compliant library or SDK can be used to perform the same steps:
+
+* [web3js](https://web3js.readthedocs.io/en/v1.10.0/)
+* [web3.py](https://web3py.readthedocs.io/en/stable/quickstart.html)
+
+**Requirements to follow this guide**
+
+* Have npm and Node js installed. Instructions [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
+With npm and node installed, pull the [getting-started](https://github.com/verify-media/getting-started) repo and install the npm packages.
+
+1. `npm install`
+
+If you are using the Sandbox environment, the `getting-started` should already contain the ABIs. 
+
+If you are not using the Sandbox environment, export the application binary interface (ABI) for the IdentityRegisty and ContentGraph smart contracts. You can do so by going to the implementation contract on the block explorer (list [here](/smart-contracts/)), and saving the exported ABI in a correspondingly named json file in the root of the
+`getting-started` directory. 
+
+## 1. Registering a Root Identity
+
+The root identity is a secp256k1 key pair that represents the publishing organization or person. This wallet does not need to be funded
+and will maintain the balance of content tokens. It will be used for registering intermediate identities that will
+handle transactions for Verify.
+
+1. Create a keypair or use an existing keypair
+    * [Metamask](https://support.metamask.io/hc/en-us/articles/360015289632-How-to-export-an-account-s-private-key)
+    * [Forge](https://book.getfoundry.sh/reference/forge/forge-create)
+    * [ethers](https://docs.ethers.org/v4/api-wallet.html)
+
+    *It's important to make sure the generated keypair uses the secp256k1 curve*
+
+  You can also create keys running the following in the root of the `getting-started` directory:
+  * `node gen-wallet.js`
+
+2. Create a transacting wallet to perform transactions.
+
+Follow the guides from 1 to create a second wallet. Fund the wallet with MATIC on mumbai using one of the following faucets:
+
+- https://mumbaifaucet.com/
+- https://faucet.polygon.technology/
+- https://bwarelabs.com/faucets/polygon-testnet
+
+3. Follow the setup instructions in the `README.md` of `getting-started`
+
+4. Register the Root Identity
+
+In the `main()` function of `index.js` you will see some code commented out. Uncomment the call to the registerRoot() method and
+run the code by running: `node index.js`. Your code should look like the following:
+
+``` javascript copy
+async function main() {
+  await registerRoot();
+}
+```
+
+If all is configured you should see the following as output:
+
+```
+Registering root...
+Root registered!
+```
+
+If you encounter an error check the response against the error codes of the IdentityRegistry.sol [here](/publishing/identity/contract/#errors).
+In addition make sure you have configured the `.env` file as shown in `.env.template`.
+
+Go the [Identity Registry Sandbox Proxy](https://mumbai.polygonscan.com/address/0x27BA7E931906FebA79dED5d32947b12f30379135#readProxyContract) smart contract read as proxy methods. Running `registered(<ROOT_ADDRESS>)` should return `true`.
+
+## 2. Registering a Intermediate
+
+Once a root Identity has been registered we will create a signature from the root signing pair on the address of the
+intermediate Identity, following the [EIP712](https://eips.ethereum.org/EIPS/eip-712) typed signature standard.
+
+1. Modify `main()` in `index.js` to the following:
+
+```javascript copy
+async function main() {
+  await registerIntermediate();
+  const root = await whoIs();
+  console.log(root);
+}
+```
+
+The `registerIntermediate()` function will register the intermediate wallet for 1 day. To customize this behavior,
+check the implementation `index.js` and the docs for the  [`register()`](/publishing/identity/contract/#registerbytes-memory-signature-address-root-address-intermediate-uint256-expiry-uint256-chainid-uint256-deadline) method of IdentityRegistry.sol.
+
+2. Run `node index.js`
+
+From running the command in 2 you should get the following output:
+
+```
+Getting nonce...
+Sign message: <BYTE_32>
+Signature generated: <BYTES>
+Registering intermediate...
+Intermediate wallet registered!
+Who is: <INTERMEDIATE_ADDRESS>
+<ROOT_ADDRESS>
+```
+
+You can check the registration by going to the [Identity Registry Sandbox Proxy](https://mumbai.polygonscan.com/address/0x27BA7E931906FebA79dED5d32947b12f30379135#readProxyContract) smart contract read as proxy methods. Running `whoIs(<INTERMEDIATE_ADDRESS>)` should return the root address.
+
+## 3. Publishing
+
+In this step we are going to create an asset token using a randomly generated string as our content. 
+
+1. Modify `maint()` in `index.js` to the following:
+
+```javascript copy
+async function main() {
+  const { assetId } = await publishContent();
+  console.log(assetId)
+}
+```
+
+The publishContent method does the following:
+
+1. Creates a random piece of content, a utf8 random string.
+2. Generates an AssetID from hashing the content.
+3. Stores the content via IPFS.
+4. Creates a metadata file for the content.
+5. Signs the metadata file with the intermediate key pair.
+6. Stores the metadata via IPFS
+7. Creates a new Asset node owned by the root wallet in the Content Graph using the `publish()` method.
+
+2. Run `node index.js`
+
+From running the command about you should see the following as output:
+
+```
+Publishing content:  { text: <RANDOM_TEXT> }
+AssetId: <BYTES_32_ASSET_ID>
+Storing Content...
+Stored content at: ipfs://<CID_CONTENT>
+Signing metadata...
+Metadata signed
+Uploaded to ipfs: ipfs://<CID_OF_METADATA>
+Publishing to the ContentGraph...
+Transaction hash: 0xf0a7aeb750fef9287f23944ff6e25bd9eef93ec1ce5d612ec1b154588e60166e
+******** content published ********
+```
+
+Congrats you have now published and attested to your first piece of content (in sandbox)! Checkout the [consuming getting started](/consuming/getting-started/) for more info
+on consuming the tokens that exist in Verify.

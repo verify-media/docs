@@ -1,0 +1,224 @@
+# ContentGraph.sol
+
+The interface for the content graph smart contract. This contract utilizes ERC6150 and supports
+its interface more info on the functions supported [here](https://eips.ethereum.org/EIPS/eip-6150)
+
+## Node ids
+The ContentGraph indexes all content using a unique id. Ids are based on the underlying content for asset
+nodes. For reference and org nodes its up to the publisher.
+
+**Asset Ids:**
+`keccak256(binary data of content)`
+
+**Organization/Reference Ids:**
+Example method: `keccak256(abi.encodedPacked(wallet,nodesCreated++))`
+
+## Functions
+
+### totalSupply()
+
+Returns the total number of nodes in the Content Graph.
+
+### nodesCreated(address user)
+
+Returns the number of nodes created by an address. Used as a nonce to create IDs for non-asset nodes.
+
+### publishBulk(bytes32 parentId, ContentNode[] calldata content)
+
+Given a parent id of NodeType ORG, publishes a set of Content nodes (NodeType == REFERENCE|ASSET), setting the uri for assets nodes and referenceOf for reference nodes. This succeeds so long that:
+
+* Passed parent is an existing org node that is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* All ids are correctly formed based on their type and are unique, they do not exist already in the content graph.
+* For ContentNodes of nodeType ASSET, a uri must be passed.
+* For ContentNodes of nodeType REFERENCE, the value of referenceOf must be an existing asset node in the graph.
+
+``` solidity
+struct ContentNode {
+    bytes32 id;
+    NodeType nodeType;
+    bytes32 referenceOf;
+    string uri;
+}
+```
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`InvalidParams()`](/publishing/graph/contract/#invalidparams)
+* [`NodeAlreadyExists()`](/publishing/graph/contract/#nodealreadyexists)
+
+### publish(bytes32 parentId, ContentNode content)
+
+Given a parent id of NodeType ORG, publishes a Content node (NodeType == REFERENCE|ASSET), setting the uri for a asset node and referenceOf for a reference node. This succeeds so long that:
+
+* Passed parent is an existing org node that is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* The id is correctly formed based on its type and is unique, it does not exist already in the content graph.
+* For ContentNodes of nodeType ASSET, a uri must be passed.
+* For ContentNodes of nodeType REFERENCE, the value of referenceOf must be an existing asset node in the graph.
+
+``` solidity
+struct ContentNode {
+    bytes32 id;
+    NodeType nodeType;
+    bytes32 referenceOf;
+    string uri;
+}
+```
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`InvalidParams()`](/publishing/graph/contract/#invalidparams)
+* [`NodeAlreadyExists()`](/publishing/graph/contract/#nodealreadyexists)
+
+### createNode(bytes32 id, bytes32 parentId, NodeType nodeType, bytes32 referenceOf)
+
+Given a parent id of NodeType ORG, creates a node of a given type. If the NodeType is REFERENCE, sets the referenceOf value as well. his succeeds so long that:
+
+* Passed parent is an existing org node that is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* The id is correctly formed based on its type and is unique, it does not exist already in the content graph.
+* For ContentNodes of nodeType REFERENCE, the value of referenceOf must be an existing asset node in the graph.
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`InvalidParams()`](/publishing/graph/contract/#invalidparams)
+* [`NodeAlreadyExists()`](/publishing/graph/contract/#nodealreadyexists)
+
+### move(bytes32 id, bytes32 newParentId)
+
+Moves a node corresponding to the passed id to org node corresponding to the passed newParentId. This is successful so long that:
+
+* Passed id is an existing node that is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* Passed newParentId is an existing org node that is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### setAccessAuth(bytes32 id, address accessAuth)
+
+Sets the access authorization contract for the node at id. This is successful so long that:
+
+* The node corresponding to the id passed is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### setReferenceAuth(bytes32 id, address referenceAuth)
+
+Sets the reference authorization contract for the node at id. This is successful so long that:
+
+* The node corresponding to the id passed is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* The node is not of NodeType REFERENCE.
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### setURI(bytes32 id, string calldata uri)
+
+Sets the URI for a token/node at id. This is successful so long that:
+
+* The node corresponding to the id passed is owned by the root identity that the intermediate is acting on behalf of. See [identity](/publishing/identity/) for more.
+* The node is not of NodeType REFERENCE.
+
+On error throws:
+
+* [`NotAuthorized()`](/publishing/graph/contract/#notauthorized)
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### auth(bytes32 id, address user)
+
+Returns a if a passed user address is authorized to access the content stored at id.
+
+* If auth is not set or the user fails auth at the level of the node, access auth is delegated to the org node parent of the node. If a user is rejected at a lower level 
+auth will not delegate to the root node, where no auth module is set.
+
+* If the node being accessed is a reference node, the owner of the reference token must satisfy the reference auth of the asset being referenced in addition to the
+user satisfying the access auth on the reference node. 
+
+On error throws:
+
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### refAuth(id, user)
+
+Returns a if a passed user address is authorized to reference the content stored at id in a collection.
+
+* If auth is not set or the user fails auth at the level of the node, reference auth is delegated to the org node parent of the node. If a user is rejected at a lower level 
+auth will not delegate to the root node, where no auth module is set.
+
+* Reference authorization will always fail for nodes of type REFERENCE.
+
+On error throws:
+
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### getNode(bytes32 id)
+
+Returns a Node corresponding to a passed id given that it exists. As nodes of NodeType REFERENCE do not have a uri, the returned uri for a reference node is uri of the asset node it references.
+
+``` solidity
+struct Node {
+    uint256 token;
+    NodeType nodeType;
+    bytes32 id;
+    bytes32 referenceOf;
+    string uri;
+    address accessAuth;
+    address referenceAuth;
+}
+```
+
+On error throws:
+
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+### tokenToNode(uint256 token)
+
+Given a tokenId that exists from the ERC6150, return the Node that corresponds to that given token Id.
+
+See [getNode()](#getnodebytes32-id) for more details.
+
+On error throws:
+
+* [`NodeDoesNotExist()`](/publishing/graph/contract/#nodedoesnotexist)
+
+## Events
+
+Initialized(version)
+
+Moved(id, from, to)
+
+AccessAuthUpdate(id, accessAuthContract)
+
+ReferenceAuthUpdate(id, refAuthContract)
+
+URIUpdate(id, uri)
+
+## Errors
+
+### NotAuthorized()
+Selector: `0xea8e4eb5`
+
+Thrown when a caller address is not registered with a root identity in the Identity Registry.
+
+### InvalidParams()
+Selector: `0xa86b6512`
+
+Thown when a the passed params are invalid.
+
+### NodeDoesNotExist()
+Selector: `0x5e926f71`
+
+Trown when attempting to preform an operation on a node which has not been created yet.
+
+### NodeAlreadyExists()
+Selector: `0xe63231f6`
+
+Thrown when attempting to create a node using a id that already exists.

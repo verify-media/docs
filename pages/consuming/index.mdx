@@ -1,0 +1,56 @@
+# Consuming
+
+All data but some digital assets in Verify are publicly available. Here we will walk through methods of indexing and reading this information.
+
+In the near future an API as well as a SDK will make performing reads in Verify much easier.
+
+## Identity
+
+Its important to known who is publishing what on Verify. To identify the publisher of a piece of content the following can be done.
+
+Given a id of a token in the graph a user can first get the metadata surrounding a token:
+
+`ContentGraph.getNode(id)`
+
+This method returns a tuple of the following, where a uri that corresponds to a metadata file location for the node.
+
+```solidity
+struct Node {
+    uint256 token;
+    NodeType nodeType;
+    bytes32 id;
+    bytes32 referenceOf;
+    string uri;
+    address accessAuth;
+    address referenceAuth;
+}
+```
+
+The metadata file will contain attestations to the publisher of the content as well as two signatures. One is the identity
+signature stored under the data field. The other is a signature from the transacting wallet.
+
+Both of these signatures can be used to recover the root identity and intermediate identity (see [identity](/publishing/identity)).
+
+The public keys recovered can be converted into their corresponding addresses by taking the keccak256 hash of the key
+and keeping the 20 right most bytes.
+
+```
+intermediateAddress: 0x3209FA...
+rootAddress: 0xAC38901...
+```
+
+To check if the intermediate identity is registered to the root, you can use the [`whoIs()`](/publishing/identity/contract) method of the identity
+registry contract. If the `intermediateAddress` is registered `whoIs()` will return the `rootAddress`, else the 0 address will be returned.
+
+To get the name associated to the `rootAddress` the `rootName()` mapping can be used to recover the name that is registered by the protocol to that
+root address.
+
+If all signatures are valid and recover to the expected values, then the values of the metadata file have been attested to by the root identity recovered.
+
+## ContentGraph
+
+To index over the tokens in the graph the `childrenOf()` and `parentOf()` methods can be used. As all nodes share a common parent id: 0, the tree can be indexed
+by starting at the root and using the childrenOf() method to get the list of child nodes. To traverse up from a leaf node the `parentOf()` method can be used to
+get the single parent of a child node.
+
+As the content graph is based on [ERC6150](https://eips.ethereum.org/EIPS/eip-6150) which is based on [ERC721](https://eips.ethereum.org/EIPS/eip-721) , traditional methods of token ownership indexing can be used.

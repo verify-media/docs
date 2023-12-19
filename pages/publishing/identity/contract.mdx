@@ -1,0 +1,114 @@
+# IdentityRegistry.sol
+
+The interface for the IdentityRegistry smart contract. This contract utilizes [EIP712](https://eips.ethereum.org/EIPS/eip-712) to allow
+for safe use of off chain messages. Signature expiry and nonces are used to prevent signature replays attacks.
+
+## Functions
+
+### registered(address user)
+
+Returns `true` if an address is registered as a root identity in the registry, otherwise `false`.
+
+### rootName(address user)
+
+Returns the name corresponding to the identity that owns the root address. If not registered returns an empty string: `""`.
+
+### nameToRoot(string memory name)
+
+Returns the root identity address that corresponds to the passed name if registered, otherwise the zero address is returned.
+
+### nonces(address user)
+
+Returns the nonce value for a signing wallet. Used to prevent signature replays in registering or un-registring a intermediate
+identity.
+
+### used(address user)
+
+Returns `true` if a address that corresponds to a signing key pair has been registered, otherwise `false`.
+Identities can only be registered once.
+
+### registerRoot(address root, string memory name)
+
+Registers a passed address of a root identity key pair to a user facing name, a named real world entity. 
+
+*Only callable from the protocol address*
+
+On error throws:
+
+* [`InvalidParams()`](/publishing/identity/contract/#invalidparams)
+* [`AlreadyRegistered()`](/publishing/identity/contract/#alreadyregistered)
+
+
+### unregisterRoot(address root)
+
+Unregister a named root key pair address from the Verify identity registry. 
+
+*Only callable from the protocol address*
+
+### register(bytes memory signature, address root, address intermediate, uint256 expiry, uint256 chainID, uint256 deadline)
+
+Registers an address of an intermediate identity using a signature from an already registered root identity.
+
+The expiry is how long the signature authorizes the intermediate to act on behalf of the root. The deadline is how long the signature from the root is valid for registering.
+The chainID is used to prevent replaying of signatures across environments.
+
+This method can be called with a new signature from the root to prolong or shorten the duration of authorization, as long as the existing signature to authorize the intermediate identity
+has not expired.
+
+On error throws:
+
+* [`SignatureExpired()`](/publishing/identity/contract/#signatureexpired)
+* [`AlreadyRegistered()`](/publishing/identity/contract/#alreadyregistered)
+* [`RegistryExpired()`](/publishing/identity/contract/#registryexpired)
+* [`InvalidSignature()`](/publishing/identity/contract/#invalidsignature)
+
+### unregister(bytes memory signature, address root, address intermediate, uint256 chainID, uint256 deadline)
+
+Unregister an intermediate identity address from acting as a root identity using a signature from the root identity. The deadline is how long the signature from the root is valid for registering.
+The chainID is used to prevent replaying of signatures across environments.
+
+The signature is expired by setting the signature expiry timestamp to 0.
+
+On error throws:
+
+* [`NotRegistered()`](/publishing/identity/contract/#notregistered)
+* [`InvalidParams()`](/publishing/identity/contract/#invalidparams)
+* [`SignatureExpired()`](/publishing/identity/contract/#signatureexpired)
+* [`InvalidSignature()`](/publishing/identity/contract/#invalidsignature)
+
+### whoIs(address identity)
+
+Returns the corresponding root identity of a passed intermediate identity address if the relationship exists: the root is registered, intermediate has been registered with a signature, and the signature is still valid. 
+Address(0) means no association exists.
+
+## Errors
+
+### AlreadyRegistered()
+Selector: `0x3a81d6fc`
+
+Thrown when atempting to reuse a identity that has already been registered.
+
+### InvalidParams()
+Selector: `0xa86b6512`
+
+Thrown when the params passed are invalid based on method specificaiton.
+
+### InvalidSignature()
+Selector: `0x8baa579f`
+
+Thrown when the recovered signer does not match declared signer.
+
+### NotRegistered()
+Selector: `0xaba47339`
+
+Thrown when a address is not registered.
+
+### RegistryExpired()
+Selector: `0xc38f8d3f`
+
+Thrown if a signaure that maintins a intermediate identity's registration to a root has expired and is no longer valid.
+
+### SignatureExpired()
+Selector: `0x0819bdcd`
+
+Thrown if a signature being used has passed the deadline specified when it was created.

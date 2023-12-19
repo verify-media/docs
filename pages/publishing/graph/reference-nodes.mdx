@@ -1,0 +1,33 @@
+# Reference Nodes
+
+Reference nodes are a link to an existing asset node.
+
+This association is stored in the content graph in the referencOf of the node struct.
+
+Reference nodes only exist as leafs in the content graph.
+
+## Ids
+
+Like org nodes their ids are not calculated based on the content they represent. Reference Ids must be unqiue. It is up to the publisher
+how they wish to create these IDs. One recommended way is to compute them
+from the public address of the publishing wallet and the count of tokens created in the graph.
+
+```
+newReferenceNodeId = keccak256(abi.encodePacked(address(user),nonce + 1));
+```
+
+## Authorization
+
+Authorization modules can be set to access reference nodes by utilizing the `setAccessAuth()` method. Reference access modules
+can not be set for reference nodes as they are unable to be referenced by another reference node.
+
+Providing auth to a user reference means that a users should be able to access the asset that is being references, so long that
+the owner of the reference node also satisfies the reference auth module on the asset.
+
+If a user does not satisfy the access module set but the owner of the reference node satisfies the corresponding reference module, 
+authorization for access will be delegated to parent org nodes access modules.
+
+## Metadata
+
+Reference nodes do not supply any additional metadata. When indexed reference nodes uris to metadata point to the original
+assets metadata which follows the [schema of an asset node](/publishing/graph/asset-nodes/).

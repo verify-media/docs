@@ -1,0 +1,52 @@
+# Licenses
+
+Each node in the content graph can have a license specified to access and reference the underlying content. These licenses
+are smart contracts that follow the IAuthorization interface:
+
+```solidity
+interface IAuthorization {
+    function auth(bytes32 id, address user) external view returns (bool isAuthorized);
+}
+```
+
+This interface allows publishers to the content graph to reference content in a collection node and end consumers to access
+the content that is in an encrypted state at its publicly accessible location. See [Distribute Key Management](/publishing/access-control/methods/) for more.
+
+A publisher may create their own licenses or use common ones.
+
+The licenses allow for complex functionality, such as only allowing reference of an asset if it uses a particular access license.
+
+## Example License
+
+The following is an example which is a simple allow list module. This would allow the owner to give the ability to access or reference a
+node in the content graph to a set of users.
+
+```solidity
+pragma solidity ^0.8.15;
+
+import {IContentGraph} from "../IContentGraph.sol";
+
+contract AllowListAuthorization {
+    address public graph;
+    mapping(bytes32 => mapping(address => bool)) allowList;
+
+    constructor(address _graph) {
+        graph = _graph;
+    }
+
+    function setState(bytes32 id, address user, bool state) public {
+        _checkOwner(bytes32 id);
+        allowList[id][user] = state;
+    }
+
+    function auth(bytes32 id, address user) external view returns (bool isAuthorized) {
+        isAuthorized = allowList[id][user];
+    }
+
+    function _checkOwner(bytes32 id) internal view virtual {
+        uint256 token = IContentGraph(graph).getNode(id).token;
+        require(IContentGraph(graph).ownerOf(token) == msg.sender, "TokenOwners: caller is not the owner of token id");
+    }
+}
+```
+

@@ -1,0 +1,60 @@
+# The Content Graph
+
+The content graph is based on the [ERC6150](https://eips.ethereum.org/EIPS/eip-6150) standard for hierarchical NFTs. This hierarchical
+structure allows for inheritance of parent licenses from children.
+
+There are three types of tokens/nodes that exist in the graph.
+
+- **Organization Nodes**: Used to manage the organization of content.
+- **Reference Nodes**: A reference to an asset node, owned by another publisher.
+- **Asset nodes**: Nodes which abstractly represent a digital asset.
+
+The root of the graph (id: 0) is unowned. Allowing any publisher registered through the identity registry of Verify to create nodes as children.
+
+These node types allow content published to Verify to have multiple patterns of auth/ownership, based on the publishers organizational
+and content licensing needs.
+
+## Organization (Org) Nodes
+
+Org nodes do not directly reference content. Their purpose is to organize content represented by reference and asset nodes. Allowing for all children of the org node
+to inherit the access or reference license specified at that level.
+
+Direct child nodes of the org node may also be org nodes.
+
+**Owners of org nodes have the ability to**
+
+- Create new child nodes (of any type)
+- Delete child nodes (of any type)
+- Edit child nodes (of any type)
+- Set access or reference licenses for the org node or any children.
+- Transfer the or any child token to other identities.
+
+## Reference Nodes
+
+Reference nodes represent a reference to an existing asset node. They are useful in redistributing assets that are not owned under another publisher.
+
+Each reference nodes specifies a referenceOf. The value of the referenceOf is the id which this node is referencing. In order to create a 
+reference node the creator must satisfy the referenced asset node reference license.
+
+> Reference nodes do not have any child nodes and can only exist as leafs in the graph. They also cannot be referenced by other nodes in the graph.
+
+**Owners of collection nodes have the ability to**
+
+- Set access modules for the reference node.
+- Delete the reference node.
+- Transfer the node to other identities or move between owned parents.
+
+In order to access a reference node through the `auth()` method. The user calling must satisfy the access authorization set by the creator as well as
+the creator satisfying the reference authorization module set on the asset node it references.
+
+## Asset Nodes
+
+Abstractly represents a digital asset. Ownership of this node/token represents the ownership of the underlying asset.
+
+> Asset nodes do not have any child nodes and can only exist as leafs in the graph.
+
+**Owners of asset nodes have the ability to:**
+
+- The ability to set metadata associated with the asset
+- The ability to set reference and access modules.
+- Transfer the node to other identities or move between owned parents.
