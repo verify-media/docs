@@ -5,10 +5,9 @@
   "type": "page",
   "href": "https://verifymedia.com/"
 },
-"why": "Why Verify?",
-  "how-it-works": "How it works",
-  "publishing": "Publishing",
-  "consuming": "Consuming",
-  "smart-contracts": "Smart Contracts",
-  "license": "License"
+"how-it-works": "How it works",
+"publishing": "Publishing",
+"consuming": "Consuming",
+"smart-contracts": "Smart Contracts",
+"license": "License"
 }
