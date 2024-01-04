@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/verify-media/docs#readme",
   "dependencies": {
-    "next": "^13.0.6",
+    "eslint-config-next": "^14.0.4",
+    "next": "^14.0.4",
     "nextra": "latest",
     "nextra-theme-docs": "latest",
     "react": "^18.2.0",
