@@ -3,20 +3,20 @@ import { DocsThemeConfig } from "nextra-theme-docs";
 
 const config: DocsThemeConfig = {
   logo: <>
-  <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="29" height="29"/>
-    <g id="logo dark">
-    <path id="Vector" d="M14.483 16.4641V26.3777" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square" stroke-linejoin="round"/>
-    <path id="Vector_2" d="M8.96493 21.6426L14.5364 27.214L20.1078 21.6426" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square"/>
-    <path id="Vector_3" d="M14.483 12.0347L14.483 2.29689" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square" stroke-linejoin="round"/>
-    <path id="Vector_4" d="M20.1415 6.7854L14.57 1.21397L8.9986 6.7854" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square"/>
-    <path id="Vector_5" d="M16.6975 14.2493L26.365 14.2493" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square" stroke-linejoin="round"/>
-    <path id="Vector_6" d="M21.9462 19.7674L27.5177 14.1959L21.9462 8.62451" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square"/>
-    <path id="Vector_7" d="M12.2684 14.2493L3.05797 14.2493" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square" stroke-linejoin="round"/>
-    <path id="Vector_8" d="M7.08954 8.59054L1.51811 14.162L7.08954 19.7334" stroke="currentColor" stroke-width="1.59184" stroke-linecap="square"/>
-    </g>
-  </svg>
-<span style={{ marginLeft: '.4em'}}>VERIFY</span>
+      <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="29" height="29"/>
+        <g id="logo dark">
+        <path id="Vector" d="M14.483 16.4641V26.3777" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square" strokeLinejoin="round"/>
+        <path id="Vector_2" d="M8.96493 21.6426L14.5364 27.214L20.1078 21.6426" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square"/>
+        <path id="Vector_3" d="M14.483 12.0347L14.483 2.29689" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square" strokeLinejoin="round"/>
+        <path id="Vector_4" d="M20.1415 6.7854L14.57 1.21397L8.9986 6.7854" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square"/>
+        <path id="Vector_5" d="M16.6975 14.2493L26.365 14.2493" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square" strokeLinejoin="round"/>
+        <path id="Vector_6" d="M21.9462 19.7674L27.5177 14.1959L21.9462 8.62451" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square"/>
+        <path id="Vector_7" d="M12.2684 14.2493L3.05797 14.2493" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square" strokeLinejoin="round"/>
+        <path id="Vector_8" d="M7.08954 8.59054L1.51811 14.162L7.08954 19.7334" stroke="currentColor" strokeWidth="1.59184" strokeLinecap="square"/>
+        </g>
+      </svg>
+      <span style={{ marginLeft: '.4em'}}>VERIFY</span>
     </>,
   project: {
     link: "https://github.com/verify-media",
@@ -26,19 +26,31 @@ const config: DocsThemeConfig = {
 </svg>
     )
   },
-  head: <><link rel="shortcut icon" type="image/x-icon" href={"/favicon.ico"} /></>,
+  head: <><link rel="shortcut icon" href="/favicon.svg" /></>,
   footer: {
     text: <span>
       MIT {new Date().getFullYear()} ©{' '}
       <a href="https://www.bcl.xyz/">
         Blockchain Creative Labs
       </a>
-  </span>,
+        <span style={{
+          marginLeft: "2em",
+        }}>
+          <a href="https://www.verifymedia.com/terms-of-service.html" color="white">
+            Terms of Service
+          </a>
+          <a href="https://www.verifymedia.com/privacy-policy.html" style={{
+            marginLeft: "2em"
+          }}>
+          Privacy Policy
+          </a>
+        </span>
+      </span>,
   },
   docsRepositoryBase: "https://github.com/verify-media/docs/tree/main/",
   useNextSeoProps() {
     return {
-      titleTemplate: 'Verify: %s'
+      titleTemplate: 'VERIFY: %s'
     }
   },
   sidebar: {

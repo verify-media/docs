@@ -1,6 +1,6 @@
 # Identity
 
-A publisher in Verify is represented by a single signing key pair, called the root identity. Once this key pair is registered in the protocol, they are
+A publisher in VERIFY is represented by a single signing key pair, called the root identity. Once this key pair is registered in the protocol, they are
 able to create N number of intermediate identities that can act on behalf of the root identity.
 
 Both root and intermediate identities are secp256k1 [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) key pairs.
@@ -11,7 +11,7 @@ The reason for this separation is to allow for two distinct usage patterns:
 
 ## Registering a Root Identity
 
-> **_NOTE:_** At this time root identities are added one by one in a manual process by the Verify team. This manual process is temporary and is only necessary while the Verify team works to develop decentralized methods to onboarding publishers to the identity registry.
+> **_NOTE:_** At this time root identities are added one by one in a manual process by the VERIFY team. This manual process is temporary and is only necessary while the VERIFY team works to develop decentralized methods to onboarding publishers to the identity registry.
 
 Once a root key pair has been generated. The address, the 20 rightmost bytes of the 32 byte keccak256 hash of the public key, is added to the identity registry smart
 contract along with a corresponding name to represent the root identity.

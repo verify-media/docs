@@ -1,11 +1,11 @@
 # Consuming
 
-This guide will walk through the methods and signature verification steps for content that is stored on Verify.
+This guide will walk through the methods and signature verification steps for content that is stored on VERIFY.
 
-## 0. Set Up a Environment
+## 0. Setup an Environment
 
 In this guide we are going to be using [ethers](https://docs.ethers.org/v5/) v5 to as part of a script to verify content
-published on Verify. Any evm compliant library or SDK can be used to perform the same steps:
+published on VERIFY. Any evm compliant library or SDK can be used to perform the same steps:
 
 * [web3js](https://web3js.readthedocs.io/en/v1.10.0/)
 * [web3.py](https://web3py.readthedocs.io/en/stable/quickstart.html)
@@ -36,7 +36,7 @@ async function main() {
 ```
 
 If you have already completed the publishing [getting started](/publishing/getting-started/) guide, you can use the assetId that you created by setting `const assetID = <YOUR_ASSET_ID>`,
-otherwise check below on methods for seeing what assets are already stored on Verify's Content Graph.
+otherwise check below on methods for seeing what assets are already stored on VERIFY's Content Graph.
 
 2. Run `node index.js` in the root of the directory.
 
@@ -59,7 +59,7 @@ is checked against the identity registry to see who is the root identity behind 
 
 ## Indexing the ContentGraph.sol
 
-Every digital asset stored on Verify is associated with a unique identifier that can be used directly or
+Every digital asset stored on VERIFY is associated with a unique identifier that can be used directly or
 derived from the original asset.
 
 The metadata associated with an asset can be found by using the `getNode(bytes32 id)` method in the ContentGraph smart contract. This
@@ -68,7 +68,7 @@ information regarding ownership of the token as well as parent child relationshi
 
 ## Indexing IdentityRegistry.sol
 
-The main methods used to understand the identity of someone acting in the Verify protocol are `whoIs(address identity)`, `rootName(address root)` and
+The main methods used to understand the identity of someone acting in the VERIFY protocol are `whoIs(address identity)`, `rootName(address root)` and
 `getSignature(address root, address intermediate)`. A relationship between an intermediate and a root can expire but the latest
 registration from the root signature will never be removed. This allows for checking of historical signatures and actions from intermediate identities.
 
@@ -93,7 +93,7 @@ Root name is used to identify root identities with a real world entity. Names ca
 
 ## Signature Verification Step by Step
 
-Verification of content published to Verify is done through recovering the signer in the corresponding metadata file, then checking the identity
+Verification of content published to VERIFY is done through recovering the signer in the corresponding metadata file, then checking the identity
 of that signer in the Identity Registry smart contract. Verification of signatures requires a live look up because relationships between an intermediate
 and a root identity does not last forever. Each registry of a intermediate identity can have a variable length of validity.
 
@@ -170,7 +170,7 @@ get the corresponding named entity associated with the root.
 > **NOTE** Having verified the content and its metadata is from a publisher it is still up to the user to interrogate the claims
 that are being made about the content.
 
-Congrats you verified a piece of content on Verify! :D
+Congrats you verified a piece of content on VERIFY! :D
 
 
 

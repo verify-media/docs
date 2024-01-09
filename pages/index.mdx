@@ -1,9 +1,9 @@
-# What is Verify?
+# What is VERIFY?
 
-Verify aims to be the central repository for content license and provenance. Equipping the world with a backend to verify the source and license of digital content.
+VERIFY aims to be the central repository for content license and provenance, equipping the world with a backend to verify the source and license of digital content.
 
-Verify is a public library of signed digital assets with capabilities that allow for a single DRM solution for digital assets. Every asset stored in Verify is signed by a real world entity that attests to the provenance of the asset. 
-The publisher declares the assets license for access and reference through a smart contract module. 
+VERIFY is a public library of signed digital assets with capabilities that allow for a single DRM solution for digital assets. Every asset stored in VERIFY is signed by a real world entity that attests to the provenance of the asset. 
+The publisher declares the asset’s license for access and reference through a smart contract module. 
 
 ## Protocol Components
 
@@ -13,25 +13,25 @@ The publisher declares the assets license for access and reference through a sma
 
 ## What this enables
 
-A reverse lookup of any content in Verify will produce provenance metadata and a named publisher. This allows for many solutions, some of which are explored below.
+A reverse lookup of any content in VERIFY will produce provenance metadata and a named publisher. This allows for many solutions, some of which are explored below.
 
 ### Tracking the Origin of Digital Content
 
-When content is added to Verify it is cryptographically signed by the publisher key pair. The signature binds each piece of content with real world organization or person.
+When content is added to VERIFY it is cryptographically signed by the publisher key pair. The signature binds each piece of content with real world organization or person.
 
 This signature attests to the ownership of the asset itself as well as the additional metadata associated with the content. While this doesn't verify the truth of metadata or the ownership from the publisher of the content,
 registry of both allows for public dispute and interrogation of content metadata. Over time bad actors are identified, and ownership rectified.
 
 ### Content Metadata Registry
 
-Each piece of content published on Verify has metadata associated with it. This metadata is bound to the digital asset through the publisher's signature.
+Each piece of content published on VERIFY has metadata associated with it. This metadata is bound to the digital asset through the publisher's signature.
 
 Publishers can provide additional information surrounding the creation of the digital assets. For example, a publisher of a image may provide information on the device, location, and identity who captured
 the photograph to attest to the legitimacy of its subject matter.
 
 ### Single Source for Access and Licensing
 
-Verify binds digital assets with smart contract licenses. These programmable licenses allow for the publisher to declare rules for accessing and referencing digital content.
+VERIFY binds digital assets with smart contract licenses. These programmable licenses allow for the publisher to declare rules for accessing and referencing digital content.
 
 A publisher must store the asset at a publicly accessible location. In the case of licensed content, the content can be stored in encrypted form. The key for decrypting the content
 is then stored in a key management system that points at the smart contract license to distribute the symmetric key to decrypt the asset or the plaintext version of the asset itself.
