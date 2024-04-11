@@ -1,0 +1,60 @@
+# VERIFY Testnet
+
+The VERIFY testnet is built with [Polygon CDK validium](https://docs.polygon.technology/cdk/architecture/cdk-validium/).
+
+With VERIFY utilizing its own L2, fees are lower for publishers and data is more highly available for content consumers. The settlement layer for VERIFY Testnet is [Polygon POS Amoy](https://www.oklink.com/amoy).
+
+## Network details
+
+```
+Network Name: VERIFY Testnet
+RPC URL: https://rpc.verify-testnet.gelato.digital
+Chain ID: 1833
+Currency Symbol: MATIC
+Block Explorer URL: https://verify-testnet.blockscout.com/
+Settlement Layer: Amoy 
+```
+
+Amoy to VERIFY testnet Bridge: https://bridge.gelato.network/bridge/verify-testnet
+
+Network details page: https://raas.gelato.network/rollups/details/public/verify-testnet
+
+## Using the VERIFY Testnet network
+
+### 1. Connect to Polygon Amoy and Acquire a balance of MATIC
+
+Add the network to your wallet with the following details: 
+
+```
+Network Name: Polygon Amoy Testnet
+New RPC URL: https://rpc-amoy.polygon.technology/
+Chain ID: 80002
+Currency Symbol: MATIC
+Block Explorer URL: https://www.oklink.com/amoy‍
+Faucet: https://faucet.polygon.technology/
+```
+
+**Faucets**
+
+* [Polygon](https://faucet.polygon.technology/)
+* [Alchemy](https://www.alchemy.com/faucets/polygon-amoy)
+
+If either faucet does not provide a sufficient balance for your usage reach out to VERIFY team with a request for testnet MATIC.
+
+### 2. Add the VERIFY Testnet Network to your wallet
+
+Navigate to the VERIFY Testnet network details page [here](https://raas.gelato.network/rollups/details/public/verify-testnet) and click "Add to wallet".
+
+### 3. Bridge MATIC from AMOY to VERIFY Testnet
+
+Use the VERIFY Bridge https://bridge.gelato.network/bridge/verify-testnet to transfer you Amoy MATIC balance to the VERIFY Testnet.
+
+### 4. Check your wallet funds on VERIFY Testnet
+
+Go the the VERIFY Testnet block explorer, and search for your wallet address.
+
+Alternatively navigate to the following url, using your wallet address in place of `<wallet_address>`.
+
+`https://verify-testnet.blockscout.com/address/<wallet_address>`
+
+_It's normal for funds to take about 10-20 mins to be processed through the bridge from Amoy to VERIFY Testnet._

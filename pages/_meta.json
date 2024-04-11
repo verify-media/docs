@@ -9,5 +9,7 @@
 "publishing": "Publishing",
 "consuming": "Consuming",
 "smart-contracts": "Smart Contracts",
+"verify-testnet": "VERIFY Testnet",
+"verify-client-sdk": "Verify Client SDK", 
 "license": "License"
 }
