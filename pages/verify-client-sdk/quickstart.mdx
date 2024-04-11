@@ -1,0 +1,35 @@
+# Quick Start
+- Since VERIFY client sdk supports javascript, start by installing [nodejs](https://nodejs.org/en) version 18 or higher.
+- Confirm the node version `node --version` in your terminal.
+
+  sdk requires:
+    ```javascript
+    "node": ">=18.15.0",
+    "npm": "9.5.0"
+    ```
+- Set up a test project
+
+  ```bash
+  mkdir test-verifymedia-client
+  cd test-verifymedia-client
+  npm init -y
+  touch index.mjs
+  npm i @verify-media/verify-client
+  ```
+
+- Open `test-verifymedia-client/index.mjs` in your favorite IDE and add the following snippet
+
+  ```javascript
+  import { hashData } from '@verify-media/verify-client'
+  console.log(hashData('hello world'))
+  ```
+
+- Head over to the terminal (within vscode or your favorite terminal which has the nodejs env setup) and try executing
+  ```bash
+  node index.mjs
+  ```
+  you should see some output like
+  ```bash
+  0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad
+  ```
+  The sdk is now up and running.

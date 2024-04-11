@@ -3,8 +3,8 @@
 This guide will walk through publishing a piece of content onto VERIFY. This guide assumes knowledge of blockchain transactions and wallets.
 
 As publishers on Testnet and Mainnet must be registered
-with the protocol, here we will use the set of [sandbox contracts](/smart-contracts/#sandbox). The only differences in the sandbox environment is root identities
-are able to register themselves and there is no name entity attached to root identities. 
+with the protocol, here we will use the set of [sandbox contracts](/smart-contracts/#sandbox). The only difference in the sandbox environment is **root identities
+are able to register themselves and there is no name entity attached to root identities.**
 
 > **Important**: This guide is meant to be used with keypairs that will not be used in production environments. Its recommended to follow
 best practices for managing wallet keys. This guide does not make recommendations on best practices for key management.
@@ -21,6 +21,8 @@ to VERIFY. Any evm compliant library or SDK can be used to perform the same step
 
 * Have npm and Node js installed. Instructions [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
+* Have MATIC on the VERIFY Testnet. For more information follow the VERIFY Testnet Guide [here](/VERIFY-testnet).
+
 With npm and node installed, pull the [getting-started](https://github.com/verify-media/getting-started) repo and install the npm packages.
 
 1. `npm install`
@@ -36,7 +38,7 @@ The root identity is a secp256k1 key pair that represents the publishing organiz
 and will maintain the balance of content tokens. It will be used for registering intermediate identities that will
 handle transactions for VERIFY.
 
-1. Create a keypair or use an existing keypair
+1. Create a keypair or use an existing keypair, to act as your root identity
     * [Metamask](https://support.metamask.io/hc/en-us/articles/360015289632-How-to-export-an-account-s-private-key)
     * [Forge](https://book.getfoundry.sh/reference/forge/forge-create)
     * [ethers](https://docs.ethers.org/v4/api-wallet.html)
@@ -46,13 +48,9 @@ handle transactions for VERIFY.
   You can also create keys running the following in the root of the `getting-started` directory:
   * `node gen-wallet.js`
 
-2. Create a transacting wallet to perform transactions.
+2. Create a transacting wallet to perform transactions, to act as your intermediate identity.
 
-Follow the guides from 1 to create a second wallet. Fund the wallet with MATIC on mumbai using one of the following faucets:
-
-- https://mumbaifaucet.com/
-- https://faucet.polygon.technology/
-- https://bwarelabs.com/faucets/polygon-testnet
+Follow the guides from the previous step to create a second wallet. Fund the wallet with MATIC on [VERIFY Testnet](https://raas.gelato.network/rollups/details/public/verify-testnet). Follow the "Using the VERIFY Testnet" guide [here](/VERIFY-testnet) for more detail.
 
 3. Follow the setup instructions in the `README.md` of `getting-started`
 
@@ -77,7 +75,7 @@ Root registered!
 If you encounter an error check the response against the error codes of the IdentityRegistry.sol [here](/publishing/identity/contract/#errors).
 In addition make sure you have configured the `.env` file as shown in `.env.template`.
 
-Go the [Identity Registry Sandbox Proxy](https://mumbai.polygonscan.com/address/0x27BA7E931906FebA79dED5d32947b12f30379135#readProxyContract) smart contract read as proxy methods. Running `registered(<ROOT_ADDRESS>)` should return `true`.
+Go the [Identity Registry Sandbox Proxy](https://verify-testnet.blockscout.com/address/0xdCE27c4a76bE1fF9F9C543E13FCC3591E33A0E25?tab=read_proxy) smart contract read as proxy methods. Running `registered(<ROOT_ADDRESS>)` should return `true`.
 
 ## 2. Registering a Intermediate
 
@@ -111,7 +109,7 @@ Who is: <INTERMEDIATE_ADDRESS>
 <ROOT_ADDRESS>
 ```
 
-You can check the registration by going to the [Identity Registry Sandbox Proxy](https://mumbai.polygonscan.com/address/0x27BA7E931906FebA79dED5d32947b12f30379135#readProxyContract) smart contract read as proxy methods. Running `whoIs(<INTERMEDIATE_ADDRESS>)` should return the root address.
+You can check the registration by going to the [Identity Registry Sandbox Proxy](https://verify-testnet.blockscout.com/address/0xdCE27c4a76bE1fF9F9C543E13FCC3591E33A0E25?tab=read_proxy) smart contract read as proxy methods. Running `whoIs(<INTERMEDIATE_ADDRESS>)` should return the root address.
 
 ## 3. Publishing
 
@@ -153,5 +151,5 @@ Transaction hash: 0xf0a7aeb750fef9287f23944ff6e25bd9eef93ec1ce5d612ec1b154588e60
 ******** content published ********
 ```
 
-Congrats you have now published and attested to your first piece of content (in sandbox)! Checkout the [consuming getting started](/consuming/getting-started/) for more info
+Congrats you have now published and attested to your first piece of content in the VERIFY sandbox environment! Checkout the [consuming getting started](/consuming/getting-started/) for more info
 on consuming the tokens that exist in VERIFY.
